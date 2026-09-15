@@ -57,6 +57,8 @@
 "export.sticky_archive" = "便笺归档（.stickies）…";
 
 "font.system" = "系统字体";
+"font.curated" = "精选字体";
+"font.system_fonts" = "所有系统字体";
 
 "help.cycle_colour" = "切换颜色  ⌘.";
 "help.find" = "查找  ⌘F";

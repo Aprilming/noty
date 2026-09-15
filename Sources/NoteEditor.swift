@@ -812,10 +812,10 @@ struct NoteTextDirectionLabel: View {
         Group {
             if let symbol = direction.symbol {
                 Image(systemName: symbol)
-                    .font(.system(size: 11, weight: .semibold))
+                    .font(Ink.bodyFont(11).weight(.semibold))
             } else {
                 Text(L10n.text("direction.auto_short"))
-                    .font(.system(size: 9.5, weight: .semibold))
+                    .font(Ink.bodyFont(9.5).weight(.semibold))
             }
         }
         .foregroundStyle(foreground)
@@ -977,7 +977,7 @@ struct NoteEditorView: View {
                     .foregroundStyle(pal.ink.opacity(0.92))
                     .focused($titleFocused)
             }
-            .font(.system(size: 12.5, weight: .semibold))
+            .font(Ink.bodyFont(12.5).weight(.semibold))
             .tint(pal.ink)
             .onSubmit {
                 flushTitle()
@@ -995,11 +995,11 @@ struct NoteEditorView: View {
             Text(store.unsavedIDs.contains(note.id)
                  ? L10n.text("note.not_saved")
                  : L10n.format("note.saved", Fmt.ago(note.modified)))
-                .font(.system(size: 10))
+                .font(Ink.bodyFont(10))
                 .foregroundStyle(pal.ink.opacity(0.42))
             Button { NoteStore.shared.togglePin(id: note.id) } label: {
                 Image(systemName: note.pinned ? "pin.fill" : "pin")
-                    .font(.system(size: 11, weight: .semibold))
+                    .font(Ink.bodyFont(11).weight(.semibold))
                     .rotationEffect(.degrees(note.pinned ? 0 : 32))
                     .frame(width: 18, height: 18)
                     .contentShape(Rectangle())
@@ -1015,7 +1015,7 @@ struct NoteEditorView: View {
 
             Button { deck.bridge.toggleTaskLine() } label: {
                 Image(systemName: "checklist")
-                    .font(.system(size: 11, weight: .semibold))
+                    .font(Ink.bodyFont(11).weight(.semibold))
                     .frame(width: 18, height: 18)
                     .contentShape(Rectangle())
             }
@@ -1024,7 +1024,7 @@ struct NoteEditorView: View {
             .help(L10n.text("help.task"))
             Button { deck.findQuery = deck.findQuery == nil ? "" : nil } label: {
                 Image(systemName: "magnifyingglass")
-                    .font(.system(size: 10.5, weight: .semibold))
+                    .font(Ink.bodyFont(10.5).weight(.semibold))
                     .frame(width: 18, height: 18)
                     .contentShape(Rectangle())
             }
@@ -1039,23 +1039,23 @@ struct NoteEditorView: View {
     private var findBar: some View {
         HStack(spacing: 6) {
             Image(systemName: "magnifyingglass")
-                .font(.system(size: 10)).foregroundStyle(pal.ink.opacity(0.45))
+                .font(Ink.bodyFont(10)).foregroundStyle(pal.ink.opacity(0.45))
             TextField(L10n.text("note.find_placeholder"), text: Binding(
                 get: { deck.findQuery ?? "" },
                 set: { deck.findQuery = $0; deck.bridge.recount($0) }))
                 .textFieldStyle(.plain)
-                .font(.system(size: 12))
+                .font(Ink.bodyFont(12))
                 .foregroundStyle(pal.ink)
                 .focused($findFocused)
                 .onSubmit { deck.bridge.findNext(deck.findQuery ?? "") }
             Text(deck.bridge.matchCount == 0 ? "—" : "\(deck.bridge.matchCount)")
-                .font(.system(size: 10.5).monospacedDigit())
+                .font(Ink.bodyFont(10.5).monospacedDigit())
                 .foregroundStyle(pal.ink.opacity(0.45))
             Button { deck.bridge.findNext(deck.findQuery ?? "", forward: false) } label: {
-                Image(systemName: "chevron.up").font(.system(size: 9, weight: .bold))
+                Image(systemName: "chevron.up").font(Ink.bodyFont(9).weight(.bold))
             }.buttonStyle(.plain).foregroundStyle(pal.ink.opacity(0.55))
             Button { deck.bridge.findNext(deck.findQuery ?? "") } label: {
-                Image(systemName: "chevron.down").font(.system(size: 9, weight: .bold))
+                Image(systemName: "chevron.down").font(Ink.bodyFont(9).weight(.bold))
             }.buttonStyle(.plain).foregroundStyle(pal.ink.opacity(0.55))
         }
         .padding(.horizontal, 14)
@@ -1069,13 +1069,13 @@ struct NoteEditorView: View {
                 Button { NoteStore.shared.setColor(id: note.id, color: idx) } label: {
                     Circle()
                         .fill(c.dash)
-                        .frame(width: 11, height: 11)
+                        .frame(width: 12, height: 12)
                         .overlay(
                             Circle().strokeBorder(pal.ink.opacity(0.55),
                                                   lineWidth: idx == note.color ? 1.5 : 0)
-                                .padding(-2.5)
+                                .padding(-2)
                         )
-                        .padding(2)
+                        .frame(width: 16, height: 16)
                         .contentShape(Circle())
                 }
                 .buttonStyle(.plain)
@@ -1099,7 +1099,7 @@ struct NoteEditorView: View {
     private func footerButton(_ title: String, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Text(title)
-                .font(.system(size: 10.5, weight: .medium))
+                .font(Ink.bodyFont(10.5).weight(.medium))
                 .foregroundStyle(pal.ink.opacity(0.72))
                 .padding(.horizontal, 8)
                 .frame(height: 20)

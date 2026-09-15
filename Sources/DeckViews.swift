@@ -52,6 +52,7 @@ struct DeckRootView: View {
                 PillView(notes: store.active)
                     .padding(.top, pillTop(panelHeight: h))
                     .padding(onRight ? .trailing : .leading, 1)
+                    .transaction { $0.animation = nil }
                     .opacity(deck.state == .rest && !deck.pillHidden ? 1 : 0)
                     .animation(.easeInOut(duration: 0.20).delay(deck.state == .rest ? 0.12 : 0), value: deck.state)
 
@@ -82,7 +83,10 @@ struct DeckRootView: View {
     /// panel grows around it or shrinks back to it.
     private func pillTop(panelHeight h: CGFloat) -> CGFloat {
         let pillH = DeckGeom.pillHeight(noteCount: max(1, store.active.count))
-        return (1.0 - Settings.deckYRatio) * max(0, h - pillH)
+        let span = max(0, h - pillH)
+        // Complement of the rounded offset the resting panel origin uses, so
+        // the pill occupies the very pixels the shrunk panel will occupy.
+        return span - (span * Settings.deckYRatio).rounded()
     }
 
     private func fanTop(_ lay: DeckLayout, panelHeight h: CGFloat) -> CGFloat {
@@ -722,7 +726,7 @@ struct PlusButton: View {
     var body: some View {
         Button(action: action) {
             Image(systemName: "plus")
-                .font(.system(size: 11, weight: .semibold))
+                .font(.system(size: 12, weight: .semibold))
                 .foregroundStyle(.primary.opacity(0.75))
                 .frame(width: DeckGeom.plusSize, height: DeckGeom.plusSize)
                 .background(Circle().fill(.regularMaterial)
@@ -746,7 +750,7 @@ struct CogButton: View {
     var body: some View {
         Button(action: action) {
             Image(systemName: "gearshape")
-                .font(.system(size: 10, weight: .semibold))
+                .font(.system(size: 12, weight: .semibold))
                 .foregroundStyle(.primary.opacity(hovering ? 0.8 : 0.5))
                 .frame(width: DeckGeom.cogSize, height: DeckGeom.cogSize)
                 .background(Circle().fill(.regularMaterial)
