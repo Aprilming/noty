@@ -487,8 +487,18 @@ struct SettingsView: View {
     private var notesTab: some View {
         row(L10n.text("settings.notes.font")) {
             Picker("", selection: $model.fontName) {
-                ForEach(Ink.faces, id: \.body) { Text($0.localizedName).tag($0.body) }
-            }.labelsHidden().frame(width: 200)
+                Section(L10n.text("font.curated")) {
+                    ForEach(Ink.faces, id: \.body) {
+                        Text($0.localizedName).tag($0.body)
+                    }
+                }
+                Section(L10n.text("font.system_fonts")) {
+                    ForEach(Ink.allSystemFontFamilies, id: \.family) { family in
+                        Text(family.family)
+                            .tag(family.members.first?.postScript ?? "")
+                    }
+                }
+            }.labelsHidden().frame(width: 220)
         }
         row(L10n.text("settings.notes.note_size")) {
             Picker("", selection: $model.noteSizeIndex) {
