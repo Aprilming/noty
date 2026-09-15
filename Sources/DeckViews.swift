@@ -722,7 +722,7 @@ struct PlusButton: View {
     var body: some View {
         Button(action: action) {
             Image(systemName: "plus")
-                .font(.system(size: 11, weight: .semibold))
+                .font(.system(size: 12, weight: .semibold))
                 .foregroundStyle(.primary.opacity(0.75))
                 .frame(width: DeckGeom.plusSize, height: DeckGeom.plusSize)
                 .background(Circle().fill(.regularMaterial)
@@ -746,7 +746,7 @@ struct CogButton: View {
     var body: some View {
         Button(action: action) {
             Image(systemName: "gearshape")
-                .font(.system(size: 10, weight: .semibold))
+                .font(.system(size: 12, weight: .semibold))
                 .foregroundStyle(.primary.opacity(hovering ? 0.8 : 0.5))
                 .frame(width: DeckGeom.cogSize, height: DeckGeom.cogSize)
                 .background(Circle().fill(.regularMaterial)

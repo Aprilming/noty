@@ -1069,13 +1069,13 @@ struct NoteEditorView: View {
                 Button { NoteStore.shared.setColor(id: note.id, color: idx) } label: {
                     Circle()
                         .fill(c.dash)
-                        .frame(width: 11, height: 11)
+                        .frame(width: 12, height: 12)
                         .overlay(
                             Circle().strokeBorder(pal.ink.opacity(0.55),
                                                   lineWidth: idx == note.color ? 1.5 : 0)
-                                .padding(-2.5)
+                                .padding(-2)
                         )
-                        .padding(2)
+                        .frame(width: 16, height: 16)
                         .contentShape(Circle())
                 }
                 .buttonStyle(.plain)

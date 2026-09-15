@@ -121,7 +121,7 @@ enum DeckGeom {
     static var plusSize: CGFloat { s(28) }
     static var plusGap: CGFloat { s(12) }
     // The cog sits under the plus, so it has to grow with it.
-    static var cogSize: CGFloat { s(24) }
+    static var cogSize: CGFloat { plusSize }
     static var cogGap: CGFloat { s(8) }
 
     static var moreTabHeight: CGFloat { s(34) }
