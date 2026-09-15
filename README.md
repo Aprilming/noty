@@ -20,7 +20,7 @@ deck fans out.
 | State | What you see | Trigger |
 |---|---|---|
 | **Rest** | A 12 pt pill on the screen edge — one coloured dash per note | idle |
-| **Fan** | Notes shingle down the edge 45 ms apart as vertical tabs, each keeping its colour and carrying its label turned on its side | pointer enters the pill |
+| **Fan** | Notes shingle down the edge 45 ms apart as vertical tabs, each keeping its colour and carrying its label vertically — CJK and emoji glyphs stay upright | pointer enters the pill |
 | **Expanded** | The note slides clear of the deck at full size, level with its own tab, which stays visible behind it | click a tab |
 
 The deck shows **five notes at a time** and puts the rest behind a `+N` tab, which

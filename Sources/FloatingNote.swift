@@ -241,7 +241,7 @@ private struct FloatingNoteView: View {
         HStack(spacing: 8) {
             Circle().fill(pal.dash).frame(width: 8, height: 8)
             Text(note.displayTitle)
-                .font(.system(size: 12.5, weight: .semibold))
+                .font(Ink.bodyFont(12.5).weight(.semibold))
                 .foregroundStyle(pal.ink.opacity(0.92))
                 .lineLimit(1)
             Spacer(minLength: 6)
@@ -250,7 +250,7 @@ private struct FloatingNoteView: View {
                 FloatingNote.shared.applyLevel()
             } label: {
                 Image(systemName: note.pinned ? "pin.fill" : "pin")
-                    .font(.system(size: 11, weight: .semibold))
+                    .font(Ink.bodyFont(11).weight(.semibold))
                     .rotationEffect(.degrees(note.pinned ? 0 : 32))
                     .frame(width: 18, height: 18)
                     .contentShape(Rectangle())
@@ -260,7 +260,7 @@ private struct FloatingNoteView: View {
             .help(note.pinned ? L10n.text("help.unpin") : L10n.text("help.pin"))
             Button { flush(); onClose() } label: {
                 Image(systemName: "xmark")
-                    .font(.system(size: 10, weight: .bold))
+                    .font(Ink.bodyFont(10).weight(.bold))
                     .frame(width: 18, height: 18)
                     .contentShape(Rectangle())
             }

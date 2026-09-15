@@ -57,6 +57,8 @@
 "export.sticky_archive" = "Sticky archive (.stickies)…";
 
 "font.system" = "System";
+"font.curated" = "Curated";
+"font.system_fonts" = "System Fonts";
 
 "help.cycle_colour" = "Cycle colour  ⌘.";
 "help.find" = "Find  ⌘F";
