@@ -38,7 +38,7 @@ enum EditorStyleEngine {
     typealias CompletedTaskPredicate = (String) -> Bool
 
     private static let heading = try! NSRegularExpression(
-        pattern: "^(#{1,6})[ \\t]+(.+)$", options: [.anchorsMatchLines])
+        pattern: "^(#{1,6}[ \\t]+)(.+)$", options: [.anchorsMatchLines])
     private static let bold = try! NSRegularExpression(
         pattern: "(\\*\\*|__)(?=\\S)(.+?)(?<=\\S)\\1")
     private static let italic = try! NSRegularExpression(
@@ -239,7 +239,8 @@ enum EditorStyleEngine {
         }
 
         each(heading) { match in
-            let level = match.range(at: 1).length
+            let rawLeader = local.substring(with: match.range(at: 1))
+            let level = rawLeader.filter { $0 == "#" }.count
             let bump = max(1.5, 7 - CGFloat(level) * 1.1)
             storage.addAttribute(.font, value: heavier(size + bump, bodyFont: bodyFont),
                                  range: global(match.range))

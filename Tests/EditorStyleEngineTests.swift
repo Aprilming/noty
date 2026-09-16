@@ -435,8 +435,15 @@ struct EditorStyleEngineTests {
         check(storage.attribute(.notyHidden, at: openingBoldMarker,
                                 effectiveRange: nil) != nil,
               "Markdown markers outside the caret line must stay hidden")
-    }
 
+        let headingMarker = text.range(of: "# Heading").location
+        check(storage.attribute(.notyHidden, at: headingMarker,
+                                effectiveRange: nil) != nil,
+              "Heading prefix '# ' must be hidden outside active caret line to avoid left offset")
+        check(storage.attribute(.notyHidden, at: headingMarker + 1,
+                                effectiveRange: nil) != nil,
+              "Heading trailing space after '#' must also be hidden outside active line")
+    }
     private static func testMarkdownCanBeRemovedIncrementally() {
         let source = "**bold**\nplain"
         let text = source as NSString
