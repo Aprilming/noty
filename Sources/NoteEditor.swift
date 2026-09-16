@@ -248,14 +248,22 @@ final class TaskTextView: NSTextView {
         }
     }
 
+    private func lineContentRange(for location: Int, in ns: NSString) -> (contentRange: NSRange, contentText: String) {
+        var start = 0
+        var end = 0
+        var contentsEnd = 0
+        ns.getLineStart(&start, end: &end, contentsEnd: &contentsEnd, for: NSRange(location: location, length: 0))
+        let range = NSRange(location: start, length: contentsEnd - start)
+        return (range, ns.substring(with: range))
+    }
+
     private func handleListAutoContinuationOnNewline() -> Bool {
         guard let storage = textStorage else { return false }
         let ns = string as NSString
         let sel = selectedRange()
         guard sel.length == 0 else { return false }
 
-        let lineRange = ns.lineRange(for: NSRange(location: sel.location, length: 0))
-        let lineText = ns.substring(with: lineRange)
+        let (lineRange, lineText) = lineContentRange(for: sel.location, in: ns)
 
         // 1. Task checklist (☐ / ☑ or - [ ] / - [x])
         let taskPattern = try! NSRegularExpression(pattern: "^([ \\t]*)([\u{2610}\u{2611}]|- \\[([ xX])\\])[ \\t]*(.*)$")
@@ -265,10 +273,9 @@ final class TaskTextView: NSTextView {
             let body = (lineText as NSString).substring(with: bodyRange).trimmingCharacters(in: .whitespacesAndNewlines)
             if body.isEmpty {
                 // Empty item: pressing Enter clears the task marker and exits list
-                let clearRange = NSRange(location: lineRange.location, length: min(lineRange.length, (lineText as NSString).length))
                 let replacement = indent.isEmpty ? "" : indent
-                if shouldChangeText(in: clearRange, replacementString: replacement) {
-                    storage.replaceCharacters(in: clearRange, with: replacement)
+                if shouldChangeText(in: lineRange, replacementString: replacement) {
+                    storage.replaceCharacters(in: lineRange, with: replacement)
                     didChangeText()
                     setSelectedRange(NSRange(location: lineRange.location + (replacement as NSString).length, length: 0))
                     return true
@@ -293,10 +300,9 @@ final class TaskTextView: NSTextView {
             let body = (lineText as NSString).substring(with: match.range(at: 3)).trimmingCharacters(in: .whitespacesAndNewlines)
             if body.isEmpty {
                 // Empty bullet item: exit list
-                let clearRange = NSRange(location: lineRange.location, length: min(lineRange.length, (lineText as NSString).length))
                 let replacement = indent.isEmpty ? "" : indent
-                if shouldChangeText(in: clearRange, replacementString: replacement) {
-                    storage.replaceCharacters(in: clearRange, with: replacement)
+                if shouldChangeText(in: lineRange, replacementString: replacement) {
+                    storage.replaceCharacters(in: lineRange, with: replacement)
                     didChangeText()
                     setSelectedRange(NSRange(location: lineRange.location + (replacement as NSString).length, length: 0))
                     return true
@@ -320,10 +326,9 @@ final class TaskTextView: NSTextView {
             let body = (lineText as NSString).substring(with: match.range(at: 3)).trimmingCharacters(in: .whitespacesAndNewlines)
             if body.isEmpty {
                 // Empty ordered item: exit list
-                let clearRange = NSRange(location: lineRange.location, length: min(lineRange.length, (lineText as NSString).length))
                 let replacement = indent.isEmpty ? "" : indent
-                if shouldChangeText(in: clearRange, replacementString: replacement) {
-                    storage.replaceCharacters(in: clearRange, with: replacement)
+                if shouldChangeText(in: lineRange, replacementString: replacement) {
+                    storage.replaceCharacters(in: lineRange, with: replacement)
                     didChangeText()
                     setSelectedRange(NSRange(location: lineRange.location + (replacement as NSString).length, length: 0))
                     return true
@@ -356,8 +361,7 @@ final class TaskTextView: NSTextView {
         guard let storage = textStorage else { return false }
         let ns = string as NSString
         let sel = selectedRange()
-        let lineRange = ns.lineRange(for: NSRange(location: sel.location, length: 0))
-        let lineText = ns.substring(with: lineRange)
+        let (lineRange, lineText) = lineContentRange(for: sel.location, in: ns)
 
         // Check if current line is an ordered list (e.g. "1. " -> "1.1 " on Tab, "1.1 " -> "1. " on Shift+Tab)
         let orderedPattern = try! NSRegularExpression(pattern: "^([ \\t]*)((?:\\d+\\.)*\\d+)[.)][ \\t]+(.*)$")
@@ -395,7 +399,7 @@ final class TaskTextView: NSTextView {
             }
         }
 
-        // Bullet list or task item: adjust leading spaces on Tab / Shift+Tab
+        // Bullet list or task item: adjust leading spaces/tabs on Tab / Shift+Tab
         let bulletOrTaskPattern = try! NSRegularExpression(pattern: "^([ \\t]*)([-*+]|[\u{2610}\u{2611}]|- \\[[ xX]\\])[ \\t]+(.*)$")
         if let match = bulletOrTaskPattern.firstMatch(in: lineText, range: NSRange(location: 0, length: (lineText as NSString).length)) {
             let indent = (lineText as NSString).substring(with: match.range(at: 1))
@@ -411,13 +415,24 @@ final class TaskTextView: NSTextView {
                     setSelectedRange(NSRange(location: max(0, sel.location + 2), length: 0))
                     return true
                 }
-            } else if indent.count >= 2 {
-                let newIndent = String(indent.dropFirst(2))
+            } else if !indent.isEmpty {
+                let newIndent: String
+                let removedCount: Int
+                if indent.hasPrefix("\t") {
+                    newIndent = String(indent.dropFirst(1))
+                    removedCount = 1
+                } else if indent.hasPrefix("  ") {
+                    newIndent = String(indent.dropFirst(2))
+                    removedCount = 2
+                } else {
+                    newIndent = String(indent.dropFirst(1))
+                    removedCount = 1
+                }
                 let newLine = "\(newIndent)\(marker) \(rest)"
                 if shouldChangeText(in: lineRange, replacementString: newLine) {
                     storage.replaceCharacters(in: lineRange, with: newLine)
                     didChangeText()
-                    setSelectedRange(NSRange(location: max(0, sel.location - 2), length: 0))
+                    setSelectedRange(NSRange(location: max(0, sel.location - removedCount), length: 0))
                     return true
                 }
             }
