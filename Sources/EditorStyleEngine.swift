@@ -108,7 +108,7 @@ enum EditorStyleEngine {
                       bodyFont: @escaping FontProvider,
                       isCompletedTask: @escaping CompletedTaskPredicate) -> [NSRange] {
         let font = bodyFont(size)
-        let paragraphStyle = textDirection.paragraphStyle
+        let paragraphStyle = adaptiveSpacing(for: font, base: textDirection.paragraphStyle)
         textView.typingAttributes = [.font: font, .foregroundColor: ink,
                                      .paragraphStyle: paragraphStyle]
 
@@ -132,7 +132,7 @@ enum EditorStyleEngine {
             storage.removeAttribute(.link, range: range)
             storage.addAttribute(.foregroundColor, value: ink, range: range)
             storage.addAttribute(.font, value: font, range: range)
-            applyParagraphStyles(to: storage, range: range, direction: textDirection)
+            applyParagraphStyles(to: storage, range: range, direction: textDirection, bodyFont: font)
 
             let fragment = storage.mutableString.substring(with: range)
             if markdownEnabled {
@@ -160,9 +160,11 @@ enum EditorStyleEngine {
     /// notes can contain both English and Arabic/Hebrew paragraphs naturally.
     private static func applyParagraphStyles(to storage: NSTextStorage,
                                              range: NSRange,
-                                             direction: NoteTextDirection) {
+                                             direction: NoteTextDirection,
+                                             bodyFont: NSFont) {
         guard direction == .automatic else {
-            storage.addAttribute(.paragraphStyle, value: direction.paragraphStyle, range: range)
+            let styled = adaptiveSpacing(for: bodyFont, base: direction.paragraphStyle)
+            storage.addAttribute(.paragraphStyle, value: styled, range: range)
             return
         }
 
@@ -174,11 +176,28 @@ enum EditorStyleEngine {
             let target = NSIntersectionRange(paragraph, range)
             guard target.length > 0 else { break }
             let contents = text.substring(with: paragraph)
+            let styled = adaptiveSpacing(for: bodyFont, base: direction.paragraphStyle(for: contents))
             storage.addAttribute(.paragraphStyle,
-                                 value: direction.paragraphStyle(for: contents),
+                                 value: styled,
                                  range: target)
             location = NSMaxRange(target)
         }
+    }
+
+    private static func adaptiveSpacing(for font: NSFont, base: NSParagraphStyle) -> NSParagraphStyle {
+        let style = (base.mutableCopy() as! NSMutableParagraphStyle)
+        // Proportional line spacing: gentle for standard Latin metrics,
+        // slightly more for tall fonts (CJK, high-ascender scripts).
+        let ratio = (font.ascender - font.descender) / font.pointSize
+        let spacing: CGFloat
+        if ratio > 1.3 {
+            // CJK and tall-metric fonts need more breathing room.
+            spacing = font.pointSize * 0.18
+        } else {
+            spacing = font.pointSize * 0.1
+        }
+        style.lineSpacing = spacing
+        return style
     }
 
     /// The only characters any of the expressions below can match on. A link
