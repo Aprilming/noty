@@ -340,7 +340,8 @@ final class DeckPanel: NSPanel {
         // .fullScreenAuxiliary is what lets the panel join a full-screen space
         // at all — granting it unconditionally showed the deck over full-screen
         // apps with the setting off, just at a lower level (issue #27).
-        var behavior: NSWindow.CollectionBehavior = [.canJoinAllSpaces, .stationary, .ignoresCycle]
+        var behavior: NSWindow.CollectionBehavior = [.stationary, .ignoresCycle]
+        if !Settings.confineToSpace { behavior.insert(.canJoinAllSpaces) }
         if Settings.showOverFullScreen { behavior.insert(.fullScreenAuxiliary) }
         collectionBehavior = behavior
     }

@@ -115,6 +115,7 @@ final class SettingsModel: ObservableObject {
     @Published var screens: [NSScreen] = NSScreen.screens
     @Published var edgeWidth: Double    { didSet { Settings.edgeWidth = edgeWidth; apply() } }
     @Published var overFullScreen: Bool { didSet { Settings.showOverFullScreen = overFullScreen; apply() } }
+    @Published var confineToSpace: Bool { didSet { Settings.confineToSpace = confineToSpace; apply() } }
     @Published var launchAtLogin: Bool  { didSet { Settings.launchAtLogin = launchAtLogin } }
 
     @Published var autoUpdate: Bool {
@@ -171,6 +172,7 @@ final class SettingsModel: ObservableObject {
         screens = NSScreen.screens
         edgeWidth = Settings.edgeWidth
         overFullScreen = Settings.showOverFullScreen
+        confineToSpace = Settings.confineToSpace
         launchAtLogin = Settings.launchAtLogin
         autoUpdate = Updater.available && Updater.shared.automaticallyChecks
         fontName = Settings.noteFontName
@@ -473,6 +475,9 @@ struct SettingsView: View {
                       help: L10n.text("settings.deck.hover_open_help"),
                       isOn: $model.openOnHover)
             toggleRow(L10n.text("menu.show_over_fullscreen"), isOn: $model.overFullScreen)
+            toggleRow(L10n.text("settings.deck.one_space"),
+                      help: L10n.text("settings.deck.one_space_help"),
+                      isOn: $model.confineToSpace)
             toggleRow(L10n.text("menu.launch_at_login"), isOn: $model.launchAtLogin)
         } footer: {
             Text(L10n.text("settings.deck.drag_help"))
