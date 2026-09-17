@@ -6,13 +6,13 @@
     <description>Sticky notes that live at the edge of your screen.</description>
     <language>en</language>
     <item>
-      <title>1.8.0</title>
-      <pubDate>Tue, 15 Sep 2026 21:15:26 +0000</pubDate>
-      <sparkle:version>138</sparkle:version>
-      <sparkle:shortVersionString>1.8.0</sparkle:shortVersionString>
+      <title>1.9.0</title>
+      <pubDate>Thu, 17 Sep 2026 06:36:39 +0000</pubDate>
+      <sparkle:version>147</sparkle:version>
+      <sparkle:shortVersionString>1.9.0</sparkle:shortVersionString>
       <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
-      <description><![CDATA[<p>Noty 1.8.0</p><ul><li><a href="https://github.com/aimen08/noty/pull/39">#39</a> feat: support custom/system-installed fonts for note bodies &mdash; @zwmmm</li><li><a href="https://github.com/aimen08/noty/pull/41">#41</a> Improve note title rendering in the Fanned state for CJK and mixed-script titles. &mdash; @realtvop</li></ul><p>Answered issues:</p><ul><li><a href="https://github.com/aimen08/noty/issues/37">#37</a> [Feature Request] Support custom/system-installed fonts for note bodies (Happy to submit a PR!) &mdash; requested by @zwmmm</li><li><a href="https://github.com/aimen08/noty/issues/38">#38</a> The app&#x27;s icon is too large. &mdash; requested by @JonyChuh</li></ul>]]></description>
-      <enclosure url="https://github.com/aimen08/noty/releases/download/v1.8.0/Noty.dmg" type="application/octet-stream" sparkle:edSignature="FMMB4Z7c6y836HZqZVxB7JxK/pTDPp6jpV89xrcQ+t9Uh6TrkohkFBoQrzsUdoti27ZQDZAQKoe2/GzQjznEAA==" length="2287366" />
+      <description><![CDATA[<p>Noty 1.9.0</p><ul><li><a href="https://github.com/aimen08/noty/pull/42">#42</a> Feature/markdown editor enhancements &mdash; @zwmmm</li></ul>]]></description>
+      <enclosure url="https://github.com/aimen08/noty/releases/download/v1.9.0/Noty.dmg" type="application/octet-stream" sparkle:edSignature="D4Lyk9jgtuiuN3C9/1G2bk00y0GtSwicx3X3CGfFxUr5wkNXcxOJZa476CYTJcznvY8T/99xt97tBnf2GaXUDQ==" length="2294555" />
     </item>
   </channel>
 </rss>
