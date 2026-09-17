@@ -453,7 +453,8 @@ enum Tasks {
     static let donePrefix = "\u{2611} "
 
     static func marker(of line: some StringProtocol) -> Character? {
-        guard let f = line.first, f == open || f == done else { return nil }
+        let trimmed = line.drop(while: { $0 == " " || $0 == "\t" })
+        guard let f = trimmed.first, f == open || f == done else { return nil }
         return f
     }
 
@@ -462,7 +463,8 @@ enum Tasks {
     /// Strip the marker for display in lists and titles.
     static func stripped(_ line: some StringProtocol) -> String {
         guard isTask(line) else { return String(line) }
-        return String(line.dropFirst()).trimmingCharacters(in: .whitespaces)
+        let trimmed = line.drop(while: { $0 == " " || $0 == "\t" })
+        return String(trimmed.dropFirst()).trimmingCharacters(in: .whitespaces)
     }
 
     /// Markdown task syntax in, ☐/☑ out.

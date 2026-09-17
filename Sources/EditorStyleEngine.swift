@@ -38,7 +38,7 @@ enum EditorStyleEngine {
     typealias CompletedTaskPredicate = (String) -> Bool
 
     private static let heading = try! NSRegularExpression(
-        pattern: "^(#{1,6})[ \\t]+(.+)$", options: [.anchorsMatchLines])
+        pattern: "^(#{1,6}[ \\t]+)(.+)$", options: [.anchorsMatchLines])
     private static let bold = try! NSRegularExpression(
         pattern: "(\\*\\*|__)(?=\\S)(.+?)(?<=\\S)\\1")
     private static let italic = try! NSRegularExpression(
@@ -47,7 +47,7 @@ enum EditorStyleEngine {
     private static let struck = try! NSRegularExpression(
         pattern: "~~(?=\\S)(.+?)(?<=\\S)~~")
     private static let quote = try! NSRegularExpression(
-        pattern: "^>[ \\t]?(.*)$", options: [.anchorsMatchLines])
+        pattern: "^(>[ \\t]?)(.*)$", options: [.anchorsMatchLines])
     private static let bullet = try! NSRegularExpression(
         pattern: "^[ \\t]*([-*+])[ \\t]+", options: [.anchorsMatchLines])
     private static let link = try! NSRegularExpression(
@@ -226,7 +226,7 @@ enum EditorStyleEngine {
         func dim(_ localRange: NSRange) {
             let range = global(localRange)
             if let activeLine,
-               NSIntersectionRange(range, activeLine).length > 0 || activeLine.location == range.location {
+               NSIntersectionRange(range, activeLine).length > 0 || (activeLine.location >= range.location && activeLine.location <= NSMaxRange(range)) {
                 storage.addAttribute(.foregroundColor, value: faint, range: range)
             } else {
                 storage.addAttribute(.notyHidden, value: true, range: range)
@@ -258,7 +258,8 @@ enum EditorStyleEngine {
         }
 
         each(heading) { match in
-            let level = match.range(at: 1).length
+            let rawLeader = local.substring(with: match.range(at: 1))
+            let level = rawLeader.filter { $0 == "#" }.count
             let bump = max(1.5, 7 - CGFloat(level) * 1.1)
             storage.addAttribute(.font, value: heavier(size + bump, bodyFont: bodyFont),
                                  range: global(match.range))
@@ -314,8 +315,8 @@ enum EditorStyleEngine {
             storage.addAttribute(.foregroundColor, value: ink.withAlphaComponent(0.62),
                                  range: global(match.range))
             storage.addAttribute(.obliqueness, value: 0.15,
-                                 range: global(match.range(at: 1)))
-            dim(NSRange(location: match.range.location, length: 1))
+                                 range: global(match.range(at: 2)))
+            dim(match.range(at: 1))
         }
         each(bullet) { match in
             storage.addAttribute(.foregroundColor, value: ink.withAlphaComponent(0.5),
